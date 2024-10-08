@@ -1,0 +1,35 @@
+{
+  "name": "savelives",
+  "version": "1.0.0",
+  "description": "A Hospital Management System [HMS] for my Software Engineering lab. ",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akshathmangudi/SaveLives.git"
+  },
+  "keywords": [
+    "HMS",
+    "Software",
+    "Engineering"
+  ],
+  "author": "Akshath Mangudi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/akshathmangudi/SaveLives/issues"
+  },
+  "homepage": "https://github.com/akshathmangudi/SaveLives#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parse": "^0.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
