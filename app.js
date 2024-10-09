@@ -9,12 +9,12 @@ require('dotenv').config();
 
 const app = express();
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); 
 app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB'))
+    .then(() => console.log('Connected to database.'))
     .catch((err) => console.error('MongoDB connection error:', err));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -85,24 +85,25 @@ app.get('/pharmacist', (req, res) => {
 });
 
 // Route to get all inventory items
-app.get('/pharmacist/inventory', (req, res) => {
+app.get('/pharmacist/inventory', async (req, res) => {
     res.sendFile(path.join(__dirname, 'pages', 'inventory.html'));
 });
-
 
 // Route to add a new inventory item
 app.post('/pharmacist/inventory', async (req, res) => {
     const { name, dosage, description, quantity, expiryDate } = req.body;
-    const newItem = new Inventory({ name, dosage, description, quantity, expiryDate });
+    const newItem = new Medicine({ name, dosage, description, quantity, expiryDate });
 
     try {
-        await newItem.save();
-        res.status(201).json(newItem);
+        const savedItem = await newItem.save();
+        console.log('Saved item:', savedItem); // Log the saved item
+        res.status(201).json(savedItem); // Send the saved item back
     } catch (error) {
         console.error('Error adding inventory:', error);
         res.status(500).json({ message: 'Failed to add inventory' });
     }
 });
+
 
 
 app.put('/pharmacist/inventory/:id', async (req, res) => {
@@ -122,6 +123,17 @@ app.delete('/pharmacist/inventory/:id', async (req, res) => {
         res.json({ message: 'Inventory item deleted successfully' });
     } catch (error) {
         res.status(400).json({ message: 'Error deleting inventory item', error });
+    }
+});
+
+// Route to get all inventory items
+app.get('/pharmacist/inventory/items', async (req, res) => {
+    try {
+        const items = await Medicine.find(); // Fetch all items from the Medicine collection
+        res.json(items); // Send the items as JSON
+    } catch (error) {
+        console.error('Error fetching inventory items:', error);
+        res.status(500).json({ message: 'Failed to fetch inventory items' });
     }
 });
 

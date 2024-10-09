@@ -1,4 +1,3 @@
-// Fetch and display inventory items
 document.addEventListener('DOMContentLoaded', () => {
     fetchInventory(); // Fetch inventory when the page loads
 
@@ -22,15 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Fetch and display inventory items
 async function fetchInventory() {
-    const response = await fetch('http://localhost:5500/pharmacist/inventory');
+    const response = await fetch('/pharmacist/inventory/items'); // Ensure this endpoint is correct
     const inventory = await response.json();
     const inventoryList = document.getElementById('inventory-list');
     inventoryList.innerHTML = '';
+
     inventory.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = `${item.name} - ${item.dosage} - ${item.quantity} (Expires on: ${new Date(item.expiryDate).toLocaleDateString()})`;
         
+        // Ensure these keys match the Medicine model
+        li.textContent = `${item.name} - ${item.dosage} - ${item.quantity} (Expires on: ${new Date(item.expiryDate).toLocaleDateString()})`;
+
         // Update Button
         const updateButton = document.createElement('button');
         updateButton.textContent = 'Update';
@@ -45,6 +48,24 @@ async function fetchInventory() {
         
         inventoryList.appendChild(li);
     });
+}
+
+async function addInventory(data) {
+    const response = await fetch('/pharmacist/inventory', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+        const newItem = await response.json();
+        console.log('Inventory item added:', newItem);
+        alert('Medicine added successfully!');
+    } else {
+        console.error('Failed to add inventory item:', response.statusText);
+    }
 }
 
 async function deleteInventory(id) {
