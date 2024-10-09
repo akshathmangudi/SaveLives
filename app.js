@@ -4,22 +4,18 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/user')
+const Medicine = require('./models/medicine')
 require('dotenv').config();
 
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json()); 
+app.use(bodyParser.json());
+
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('MongoDB connection error:', err));
-
-const userSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-    role: String
-}, { collection: 'collection1' });
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -32,11 +28,9 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
-
-// Login POST route for user authentication
 app.post('/login', async (req, res) => {
     const { username, password, role } = req.body;
-    console.log('Login attempt:', { username, role });  // Log login attempt details (exclude password)
+    console.log('Login attempt:', { username, role }); 
     
     try {
         const user = await User.findOne({ username });
@@ -73,27 +67,68 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Admin dashboard route
 app.get('/admin', (req, res) => {
     res.send('<h1>Admin Dashboard</h1>');
 });
 
-// Doctor dashboard route
 app.get('/doctor', (req, res) => {
     res.send('<h1>Doctor Dashboard</h1>');
 });
 
-// Pharmacist dashboard route
 app.get('/pharmacist', (req, res) => {
-    res.send('<h1>Pharmacist Dashboard</h1>');
+    res.send(`
+        <h1>Hello! What would you like to do?</h1>
+        <a href="/pharmacist/inventory">
+            <button>View Inventory</button>
+        </a>
+    `);
 });
 
-// Route for the About page
+// Route to get all inventory items
+app.get('/pharmacist/inventory', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'inventory.html'));
+});
+
+
+// Route to add a new inventory item
+app.post('/pharmacist/inventory', async (req, res) => {
+    const { name, dosage, description, quantity, expiryDate } = req.body;
+    const newItem = new Inventory({ name, dosage, description, quantity, expiryDate });
+
+    try {
+        await newItem.save();
+        res.status(201).json(newItem);
+    } catch (error) {
+        console.error('Error adding inventory:', error);
+        res.status(500).json({ message: 'Failed to add inventory' });
+    }
+});
+
+
+app.put('/pharmacist/inventory/:id', async (req, res) => {
+    try {
+        const inventoryItem = await Medicine.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!inventoryItem) return res.status(404).json({ message: 'Inventory item not found' });
+        res.json(inventoryItem);
+    } catch (error) {
+        res.status(400).json({ message: 'Error updating inventory item', error });
+    }
+});
+
+app.delete('/pharmacist/inventory/:id', async (req, res) => {
+    try {
+        const inventoryItem = await Medicine.findByIdAndDelete(req.params.id);
+        if (!inventoryItem) return res.status(404).json({ message: 'Inventory item not found' });
+        res.json({ message: 'Inventory item deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ message: 'Error deleting inventory item', error });
+    }
+});
+
 app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'about.html'));
 });
 
-// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

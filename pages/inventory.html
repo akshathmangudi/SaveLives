@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacist Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/pharmacist">Pharmacist Dashboard</a>
+        </div>
+    </nav>
+
+    <h1>Inventory Management</h1>
+
+    <!-- Create Inventory Form -->
+    <h2>Add New Inventory Item</h2>
+    <form id="add-inventory-form">
+        <input type="text" name="name" placeholder="Item Name" required>
+        <input type="text" name="dosage" placeholder="Dosage" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <input type="date" name="expiryDate" required>
+        <button type="submit">Add Inventory Item</button>
+    </form>
+
+    <h2>All Inventory Items</h2>
+    <ul id="inventory-list"></ul>
+
+    <!-- Link to your JavaScript file -->
+    <script src="../js/inventory.js" defer></script>
+</body>
+
+</html>
