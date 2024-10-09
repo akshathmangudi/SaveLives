@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const formData = new FormData(event.target);
         const data = {
-            name: formData.get('name'),
-            dosage: formData.get('dosage'),
-            description: formData.get('description'),
-            quantity: Number(formData.get('quantity')),
-            expiryDate: formData.get('expiryDate'),
+            name: formData.get('Name'),
+            dosage: formData.get('Dosage'),
+            description: formData.get('Description'),
+            quantity: Number(formData.get('Quantity')),
+            expiryDate: formData.get('ExpiryDate'),
         };
 
         // Call the function to add inventory
@@ -30,9 +30,9 @@ async function fetchInventory() {
 
     inventory.forEach(item => {
         const li = document.createElement('li');
-        
-        // Ensure these keys match the Medicine model
-        li.textContent = `${item.name} - ${item.dosage} - ${item.quantity} (Expires on: ${new Date(item.expiryDate).toLocaleDateString()})`;
+
+        // Ensure these keys match the Medicine model, including description
+        li.textContent = `${item.name} - ${item.dosage} - ${item.description} - ${item.quantity} (Expires on: ${new Date(item.expiryDate).toLocaleDateString()})`; // Added description
 
         // Update Button
         const updateButton = document.createElement('button');
@@ -49,6 +49,7 @@ async function fetchInventory() {
         inventoryList.appendChild(li);
     });
 }
+
 
 async function addInventory(data) {
     const response = await fetch('/pharmacist/inventory', {
