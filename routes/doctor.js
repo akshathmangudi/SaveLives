@@ -16,8 +16,8 @@ router.get('/', async (req, res) => { // Changed from '/api/doctor' to '/'
 
 // Create a new doctor
 router.post('/', async (req, res) => { // Changed from '/api/doctor' to '/'
-    console.log("Received POST request to /api/doctor");
-    console.log("Request body:", req.body);
+    // console.log("Received POST request to /api/doctor");
+    // console.log("Request body:", req.body);
 
     try {
         // Validate incoming data
@@ -47,18 +47,34 @@ router.post('/', async (req, res) => { // Changed from '/api/doctor' to '/'
     }
 });
 
+router.get('/:id', async (req, res) => {
+    try {
+        const doctor = await Doctor.findById(req.params.id);
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor not found' });
+        }
+        res.json(doctor);
+    } catch (error) {
+        console.error("Error fetching doctor:", error);
+        res.status(500).json({ error: 'Failed to fetch doctor', details: error.message });
+    }
+});
+
 // Update an existing doctor
-router.put('/:id', async (req, res) => { // Changed from '/api/doctor/:id' to '/:id'
-    console.log("Received data for updating doctor:", req.body);
-    console.log("Updating doctor with ID:", req.params.id, "Data:", req.body); // Log this
+// Update a doctor by ID
+router.put('/:id', async (req, res) => {
     try {
         const updatedDoctor = await Doctor.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedDoctor) {
+            return res.status(404).json({ error: 'Doctor not found' });
+        }
         res.json(updatedDoctor);
     } catch (error) {
         console.error("Error updating doctor:", error);
-        res.status(500).json({ error: 'Failed to update doctor' });
+        res.status(500).json({ error: 'Failed to update doctor', details: error.message });
     }
 });
+
 
 // Delete a doctor
 router.delete('/:id', async (req, res) => { // Changed from '/api/doctor/:id' to '/:id'
@@ -68,6 +84,16 @@ router.delete('/:id', async (req, res) => { // Changed from '/api/doctor/:id' to
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete doctor' });
     }
+});
+
+router.post('/logout', (req, res) => {
+    // Clear the session or token as needed
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to log out' });
+        }
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
 });
 
 module.exports = router;

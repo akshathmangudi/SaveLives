@@ -1,27 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     fetchDoctorData();  // Ensure this is not called elsewhere to avoid duplication
+    document.getElementById('logoutButton').addEventListener('click', logout);
 });
 
 async function submitForm(event) {
-    // This prevents the default form submission behavior
-    // which would cause a page reload
-    event.preventDefault(); 
+    event.preventDefault(); // Prevent page reload
 
-    // Collect form data
-    const doctorId = document.getElementById('doctorId').value;
+    const doctorId = document.getElementById('doctorId').value; // This can be empty when adding a new doctor
     const name = document.getElementById('name').value;
     const specialization = document.getElementById('specialization').value;
     const contact = document.getElementById('contact').value;
     const schedule = document.getElementById('schedule').value;
 
     // Prepare data object
-    const doctorData = { 
-        doctorId, 
-        name, 
-        specialization, 
-        contact, 
-        schedule 
-    };
+    const doctorData = { name, specialization, contact, schedule };
 
     try {
         let response;
@@ -29,31 +21,24 @@ async function submitForm(event) {
             // Update existing doctor
             response = await fetch(`/api/doctor/${doctorId}`, {
                 method: 'PUT',
-                headers: { 
-                    'Content-Type': 'application/json' 
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(doctorData)
             });
         } else {
             // Create new doctor
             response = await fetch('/api/doctor', {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json' 
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(doctorData)
             });
         }
 
         if (response.ok) {
             const result = await response.json();
-            console.log("Server response:", result);
-            
-            // Reset form and refresh doctor list
-            resetForm();
-            fetchDoctorData();
+            console.log("Doctor added/updated successfully:", result);
+            resetForm(); // Reset form after successful action
+            fetchDoctorData(); // Refresh doctor list
         } else {
-            // Handle error response
             const errorText = await response.text();
             console.error("Error Status:", response.status);
             console.error("Error Text:", errorText);
@@ -62,6 +47,7 @@ async function submitForm(event) {
         console.error("Network/Fetch Error:", error);
     }
 }
+
 
 async function fetchDoctorData() {
     try {
@@ -93,25 +79,29 @@ async function fetchDoctorData() {
 
 
 function showEditForm(id) {
-  fetch(`/api/doctor/${id}`)
-    .then(response => response.json())
-    .then(doctor => {
-      if (doctor) {
-        document.getElementById('doctorId').value = doctor._id;
-        document.getElementById('name').value = doctor.name;
-        document.getElementById('specialization').value = doctor.specialization;
-        document.getElementById('contact').value = doctor.contact;
-        document.getElementById('schedule').value = doctor.schedule;
-        document.getElementById('formTitle').textContent = "Edit Doctor";
-      } else {
-        console.error("Error: Doctor data not found for ID:", id);
-        // You can display an error message to the user here
-      }
-    })
-    .catch(error => {
-      console.error("Error fetching doctor data for edit:", error);
-      // You can display an error message to the user here
-    });
+    fetch(`/api/doctor/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(doctor => {
+            if (doctor) {
+                // Populate the form with doctor's data
+                document.getElementById('doctorId').value = doctor._id; // Make sure this is _id
+                document.getElementById('name').value = doctor.name;
+                document.getElementById('specialization').value = doctor.specialization;
+                document.getElementById('contact').value = doctor.contact;
+                document.getElementById('schedule').value = doctor.schedule;
+                document.getElementById('formTitle').textContent = "Edit Doctor";
+            } else {
+                console.error("Error: Doctor data not found for ID:", id);
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching doctor data for edit:", error);
+        });
 }
 
 
@@ -163,3 +153,6 @@ async function deleteDoctor(id) {
     }
 }
 
+function logout() {
+    window.location.href = '/login';
+}   

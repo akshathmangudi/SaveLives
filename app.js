@@ -28,6 +28,14 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/doctor', doctorRoutes);
+app.post('/api/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to log out' });
+        }
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));

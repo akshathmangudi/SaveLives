@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
         event.target.reset(); // Reset the form after submission
         fetchInventory(); // Refresh the inventory list
     });
+
+    document.getElementById('logoutButton').addEventListener('click', logout);
 });
 
 // Fetch and display inventory items
@@ -88,6 +90,12 @@ async function updateInventory(id) {
         fetchInventory();
     }
 }
+
+document.getElementById('logoutButton').addEventListener('click', logout);
+
+function logout() {
+    window.location.href = '/login';
+}   
 
 // Initial fetch
 fetchInventory();
