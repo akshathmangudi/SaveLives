@@ -5,20 +5,29 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/user')
 const Medicine = require('./models/medicine')
+const doctorRoutes = require('./routes/doctor');
+const Doctor = require('./models/doctor');
+
+
 require('dotenv').config();
 
 const app = express();
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to database.'))
+    .then(async () => {
+        console.log('Connected to database.')
+        // const allUsers = await User.find({});
+        // const allDoctors = await Doctor.find({});
+        // console.log("Fetching doctors: ", allDoctors);
+    })
     .catch((err) => console.error('MongoDB connection error:', err));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/api/doctor', doctorRoutes);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
@@ -30,40 +39,43 @@ app.get('/login', (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password, role } = req.body;
-    console.log('Login attempt:', { username, role }); 
-    
     try {
         const user = await User.findOne({ username });
         console.log('User found:', user ? 'Yes' : 'No');
 
-        if (user) {
-            const isMatch = await bcrypt.compare(password, user.password);
-            console.log('Password match:', isMatch);
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
 
-            if (isMatch && user.role === role) {
-                console.log('Role matched:', role);
-                switch(role) {
-                    case 'admin':
-                        res.redirect('/admin');
-                        break;
-                    case 'doctor':
-                        res.redirect('/doctor');
-                        break;
-                    case 'pharmacist':
-                        res.redirect('/pharmacist');
-                        break;
-                    default:
-                        res.status(400).send('Invalid role selected');
-                }
-            } else {
-                res.status(401).send('Invalid username, password, or role');
-            }
-        } else {
-            res.status(401).send('Invalid username, password, or role');
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log('Password match:', isMatch);
+
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
+
+        // Check if role matches
+        if (user.role !== role) {
+            return res.status(401).json({ message: 'Invalid role for this user' });
+        }
+
+        // Successful login - redirect based on role
+        switch (user.role) {
+            case 'admin':
+                res.redirect('/admin');
+                break;
+            case 'doctor':
+                res.redirect('/doctor');
+                break;
+            case 'pharmacist':
+                res.redirect('/pharmacist');
+                break;
+            default:
+                return res.status(400).json({ message: 'Invalid role' });
         }
     } catch (error) {
         console.error('Error during login:', error);
-        res.status(500).send('Internal server error');
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 
@@ -72,7 +84,17 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/doctor', (req, res) => {
-    res.send('<h1>Doctor Dashboard</h1>');
+    res.sendFile(path.join(__dirname, 'pages', 'doctor.html'));
+});
+
+app.get('/api/doctor', async (req, res) => {
+    try {
+        const doctors = await Doctor.find(); // Fetch doctors from MongoDB
+        res.json(doctors); // Send the data as JSON
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
 });
 
 app.get('/pharmacist', (req, res) => {

@@ -8,5 +8,5 @@ const medicineSchema = new mongoose.Schema({
     expiryDate: { type: Date, required: true},
 });
 
-const medicine = mongoose.model('Medicine', medicineSchema, 'collection2'); 
+const medicine = mongoose.model('Medicine', medicineSchema, 'medicines'); 
 module.exports = medicine; 
