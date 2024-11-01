@@ -1,5 +1,5 @@
 # SaveLives
-![SaveLives' login page]("./images/login.png")
+![SaveLives' demo](media/demo.mkv)
 
 SaveLives is a smooth and comprehensive hospital management system that is capable of doing mainly two things: 
 * **Inventory Management**: This module will take care of CRUD operations for updating medicines and other supplies. 
