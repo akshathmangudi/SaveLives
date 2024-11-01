@@ -45,6 +45,14 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'about.html'));
+});
+
+app.get('/contact', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'contact.html'));
+})
+
 app.post('/login', async (req, res) => {
     const { username, password, role } = req.body;
     try {
@@ -76,7 +84,7 @@ app.post('/login', async (req, res) => {
                 res.redirect('/doctor');
                 break;
             case 'pharmacist':
-                res.redirect('/pharmacist');
+                res.redirect('/pharmacist/inventory');
                 break;
             default:
                 return res.status(400).json({ message: 'Invalid role' });
@@ -88,7 +96,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-    res.send('<h1>Admin Dashboard</h1>');
+    res.sendFile(path.join(__dirname, 'pages', 'admin.html'));
 });
 
 app.get('/doctor', (req, res) => {
@@ -104,16 +112,6 @@ app.get('/api/doctor', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-
-app.get('/pharmacist', (req, res) => {
-    res.send(`
-        <h1>Hello! What would you like to do?</h1>
-        <a href="/pharmacist/inventory">
-            <button>View Inventory</button>
-        </a>
-    `);
-});
-
 // Route to get all inventory items
 app.get('/pharmacist/inventory', async (req, res) => {
     res.sendFile(path.join(__dirname, 'pages', 'inventory.html'));
@@ -165,10 +163,6 @@ app.get('/pharmacist/inventory/items', async (req, res) => {
         console.error('Error fetching inventory items:', error);
         res.status(500).json({ message: 'Failed to fetch inventory items' });
     }
-});
-
-app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'about.html'));
 });
 
 const PORT = process.env.PORT || 3000;

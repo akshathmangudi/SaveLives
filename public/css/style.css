@@ -114,7 +114,7 @@ input[type="password"] {
 
 button {
     padding: 10px 20px;
-    background-color: #28a745;
+    background-color: #000000;
     color: white;
     border: none;
     border-radius: 5px;
@@ -125,4 +125,42 @@ button {
 
 button:hover {
     background-color: #218838;
+}
+
+#inventory-list {
+    list-style: none;
+    padding: 0;
+}
+
+#inventory-list>li {
+    background: white;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#inventory-list>li button {
+    min-width: 65px;
+    padding: 5px;
+    font-size: 13px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    color: white;
+    margin-left: 5px;
+}
+
+#inventory-list>button.update {
+    background-color: #007bff;
+}
+
+#inventory-list>button.delete {
+    background-color: #dc3545;
+}
+
+button:hover {
+    opacity: 0.9;
 }

@@ -3,6 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('logoutButton').addEventListener('click', logout);
 });
 
+/**
+ * Handles submission of the doctor form, either adding a new doctor or updating an existing one.
+ * Prevents page reload, reads form data, and sends a PUT or POST request to the server.
+ * If the request is successful, resets the form and refreshes the doctor list.
+ * If the request fails, logs the error status and text to the console.
+ * @param {Event} event - The form submission event
+ */
 async function submitForm(event) {
     event.preventDefault(); // Prevent page reload
 
@@ -49,6 +56,11 @@ async function submitForm(event) {
 }
 
 
+/**
+ * Fetches all doctor data from the server and populates the #doctorTable.
+ * Each doctor is rendered as a table row with columns for name, specialization, contact, schedule, and actions (edit and delete).
+ * If the fetch fails, logs an error to the console.
+ */
 async function fetchDoctorData() {
     try {
         const response = await fetch('/api/doctor');
@@ -78,6 +90,13 @@ async function fetchDoctorData() {
 }
 
 
+/**
+ * Fetches a doctor's data from the server by ID and populates the form fields with the retrieved data.
+ * Updates the form title to "Edit Doctor" to indicate editing mode.
+ * Handles errors by logging them to the console.
+ * 
+ * @param {string} id - The unique identifier of the doctor to fetch.
+ */
 function showEditForm(id) {
     fetch(`/api/doctor/${id}`)
         .then(response => {
@@ -105,6 +124,10 @@ function showEditForm(id) {
 }
 
 
+/**
+ * Resets the form fields to their initial state, ready for adding a new doctor.
+ * Resets the form title to "Add Doctor" to indicate add mode.
+ */
 function resetForm() {
     document.getElementById('doctorId').value = '';
     document.getElementById('name').value = '';
@@ -115,6 +138,10 @@ function resetForm() {
 }
 
 
+/**
+ * Creates a new doctor in the database and refreshes the doctor table.
+ * @param {Object} doctorData - An object with keys for name, specialization, contact, and schedule.
+ */
 async function createDoctor(doctorData) {
     try {
         const response = await fetch('/api/doctor', {
@@ -129,6 +156,11 @@ async function createDoctor(doctorData) {
     }
 }
 
+/**
+ * Updates an existing doctor in the database with new data and refreshes the doctor table.
+ * @param {string} id - The unique identifier of the doctor to update.
+ * @param {Object} updatedData - An object with keys for name, specialization, contact, and schedule.
+ */
 async function updateDoctor(id, updatedData) {
     try {
         await fetch(`/api/doctor/${id}`, {
@@ -142,6 +174,10 @@ async function updateDoctor(id, updatedData) {
     }
 }
 
+/**
+ * Deletes a doctor from the database with the given ID and refreshes the doctor table.
+ * @param {string} id - The unique identifier of the doctor to delete.
+ */
 async function deleteDoctor(id) {
     try {
         await fetch(`/api/doctor/${id}`, {
@@ -153,6 +189,9 @@ async function deleteDoctor(id) {
     }
 }
 
+/**
+ * Logs the user out by redirecting to the login page.
+ */
 function logout() {
     window.location.href = '/login';
 }   
