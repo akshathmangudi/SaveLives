@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "A Hospital Management System [HMS] for my Software Engineering lab. ",
   "main": "app.js",
-  "scripts": {
-    "test": "npm test "
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/akshathmangudi/SaveLives.git"
@@ -15,6 +12,9 @@
     "Software",
     "Engineering"
   ],
+  "scripts": {
+    "test": "mocha"
+  },
   "author": "Akshath Mangudi",
   "license": "MIT",
   "bugs": {

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const csvParser = require('csv-parser');
+const { hash } = require('crypto');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const saltRounds = 10;

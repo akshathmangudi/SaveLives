@@ -5,4 +5,5 @@ const userSchema = new mongoose.Schema({
     role: { type: String, required: true }
 });
 
-module.exports = mongoose.model('User', userSchema, 'users');
+const user = mongoose.model('User', userSchema, 'users');
+module.exports = user; 
