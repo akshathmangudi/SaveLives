@@ -1,8 +1,7 @@
 # SaveLives
-<video width="1919" height="970" controls>
-    <source src="./media/demo.mp4" type="video/mp4">
-    Your browser does not suppport the video tag. 
-</video>
+
+https://github.com/user-attachments/assets/15838649-4dfa-445f-bc2d-45aa92ecadcc
+
 
 SaveLives is a smooth and comprehensive hospital management system that is capable of doing mainly two things: 
 * **Inventory Management**: This module will take care of CRUD operations for updating medicines and other supplies. 
